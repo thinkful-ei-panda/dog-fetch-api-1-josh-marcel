@@ -1,31 +1,40 @@
 'use strict';
 
-function getDogImage() {
-  fetch('https://dog.ceo/api/breeds/image/random')
+// this function fetches the dog images
+function getDogImages() {
+  const fetchNum = $('#numberOfDogs').val(),
+    fetchUrl = `https://dog.ceo/api/breeds/image/random/${fetchNum}`;
+  fetch(fetchUrl)
     .then(response => response.json())
-    .then(responseJson => 
-      displayResults(responseJson))
+    .then(responseJson => displayResults(responseJson))
     .catch(error => alert('Something went wrong. Try again later.'));
 }
 
+// this function generates the results
+function generateResults(responseJson) {
+  const dogImgs = [];
+  for (let i = 0; i<responseJson.message.length; i++) {
+    dogImgs.push(`<img src="${responseJson.message[i]}" class="results-img"></img>`);
+  }
+  return dogImgs;
+}
+
+// this function displays the results
 function displayResults(responseJson) {
-  console.log(responseJson);
-  //replace the existing image with the new one
-  $('.results-img').replaceWith(
-    `<img src="${responseJson.message}" class="results-img">`
-  )
-  //display the results section
+  const html = generateResults(responseJson).join('');
+  $('#dogs').html(html);
   $('.results').removeClass('hidden');
 }
 
+// this function creates the watch form
 function watchForm() {
   $('form').submit(event => {
     event.preventDefault();
-    getDogImage();
+    getDogImages();
   });
 }
 
+//this function calls the watch form
 $(function() {
-  console.log('App loaded! Waiting for submit!');
   watchForm();
 });
